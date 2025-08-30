@@ -1,8 +1,8 @@
-import React from 'react'
-import { Tabs } from 'expo-router'
-import { ImageBackground, Image, Text, View } from 'react-native'
-import { images } from '@/constants/images'
 import { icons } from '@/constants/icons'
+import { images } from '@/constants/images'
+import { Tabs } from 'expo-router'
+import React from 'react'
+import { Image, ImageBackground, Text, View } from 'react-native'
 
 
 const TabIcon = ({ focused, title, icon }: any) => {
@@ -72,21 +72,6 @@ const _layout = () => {
       />
 
       <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Profile',
-          headerShown: false,
-          tabBarIcon: ({ focused }) => (
-            <TabIcon
-              focused={focused}
-              title={'Profile'}
-              icon={icons.person}
-            />
-          )
-        }}
-      />
-
-      <Tabs.Screen
         name="saved"
         options={{
           title: 'Saved',
@@ -111,6 +96,21 @@ const _layout = () => {
               focused={focused}
               title={'Search'}
               icon={icons.search}
+            />
+          )
+        }}
+      />
+
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon
+              focused={focused}
+              title={'Profile'}
+              icon={icons.person}
             />
           )
         }}

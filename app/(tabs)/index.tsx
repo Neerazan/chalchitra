@@ -55,31 +55,31 @@ export default function Index() {
               onPress={() => {
                 router.push('/search')
               }}
-              placeholder='Search for a movie.'
+              placeholder='Search movies...'
             />
 
             <>
               <Text className="text-white font-bold mt-5 mb-3">
                 Latest Movies
               </Text>
-                  <FlatList
-                    data={movies}
-                    renderItem={({item}) => (
-                      <MovieCard
-                        {...item}
-                      />
-                    )}
-                    keyExtractor={(item) => item.id.toString()}
-                    numColumns={3}
-                    columnWrapperStyle={{
-                      justifyContent: 'flex-start',
-                      gap: 20,
-                      paddingRight: 5,
-                      marginBottom: 10
-                    }}
-                    className="mt-2 pb-32"
-                    scrollEnabled={false}
+              <FlatList
+                data={movies}
+                renderItem={({ item }: { item: Movie }) => (
+                  <MovieCard
+                    {...item}
                   />
+                )}
+                keyExtractor={(item: Movie) => item.id.toString()}
+                numColumns={3}
+                columnWrapperStyle={{
+                  justifyContent: 'flex-start',
+                  gap: 20,
+                  paddingRight: 5,
+                  marginBottom: 10
+                }}
+                className="mt-2 pb-32"
+                scrollEnabled={false}
+              />
             </>
           </View>
         )}
