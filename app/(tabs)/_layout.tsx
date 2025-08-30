@@ -5,7 +5,7 @@ import { images } from '@/constants/images'
 import { icons } from '@/constants/icons'
 
 
-const TabIcon = ({ focused, title, icon } : any) => {
+const TabIcon = ({ focused, title, icon }: any) => {
   if (focused) {
     return (
       <ImageBackground
@@ -17,7 +17,7 @@ const TabIcon = ({ focused, title, icon } : any) => {
           tintColor={'#151312'}
           className='size-5'
         />
-        <Text className='text-secondary text-base font-semibold ml-2'>{ title }</Text>
+        <Text className='text-secondary text-base font-semibold ml-2'>{title}</Text>
       </ImageBackground>
     )
   } else {
@@ -53,7 +53,7 @@ const _layout = () => {
           overflow: 'hidden',
           borderWidth: 1,
           borderColor: '#0f0d23',
-        }
+        },
       }}
     >
       <Tabs.Screen
