@@ -13,7 +13,7 @@ const Search = () => {
   const [searchQuery, setSearchQuery] = useState('')
 
   const {
-    data: movies = [],
+    data: movies,
     isLoading: moviesLoading,
     error: moviesError,
     refetch: loadMovie,
@@ -27,9 +27,6 @@ const Search = () => {
     const timeoutId = setTimeout(async () => {
       if (searchQuery.trim()) {
         await loadMovie();
-        if (movies?.length > 0 && movies?.[0]) {
-          await updateSearchCount(searchQuery, movies[0]);
-        }
       } else {
         reset();
       }
@@ -37,6 +34,12 @@ const Search = () => {
 
     return () => clearTimeout(timeoutId);
   }, [searchQuery])
+
+  useEffect(() => {
+    if (movies?.length > 0 && movies?.[0]) {
+      updateSearchCount(searchQuery, movies[0]);
+    }
+  }, [movies])
 
   return (
     <View className='flex-1 bg-primary'>

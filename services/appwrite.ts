@@ -48,3 +48,20 @@ export const updateSearchCount = async (query: string, movie: Movie) => {
     console.log("Error: ", error)
   }
 }
+
+export const getTrendingMovies = async () : Promise<TrendingMovie[] | undefined> => {
+  try {
+    const result = await tablesDB.listRows({
+      databaseId: DATABASE_ID,
+      tableId: TABLE_ID,
+      queries: [
+        Query.orderDesc('count'),
+        Query.limit(5)
+      ]
+    })
+    return result.rows as unknown as TrendingMovie[]
+  } catch (error) {
+    console.log("Error: ", error)
+    return undefined
+  }
+}
