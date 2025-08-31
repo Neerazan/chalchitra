@@ -7,9 +7,10 @@ interface Props {
   onChangeText?: (text:string) => void
   placeholder: string
   value?: string
+  searchInputRef: any
 }
 
-const SearchBar = ({ onPress, onChangeText, placeholder, value } : Props) => {
+const SearchBar = ({ onPress, onChangeText, placeholder, value, searchInputRef } : Props) => {
   return (
     <View className='flex-row items-center bg-dark-200 rounded-full px-5 py-2'>
       <Image
@@ -25,6 +26,7 @@ const SearchBar = ({ onPress, onChangeText, placeholder, value } : Props) => {
         value={value}
         onChangeText={onChangeText}
         className='flex-1 ml-2 text-white'
+        ref={searchInputRef}
       />
     </View>
   )

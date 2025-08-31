@@ -1,16 +1,17 @@
-import { View, Text, Image, FlatList, ActivityIndicator } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { icons } from '@/constants/icons'
-import { images } from '@/constants/images'
-import { fetchMovies } from '@/services/api'
-import useFetch from '@/hooks/useFetch'
 import MovieCard from '@/components/MovieCard'
 import SearchBar from '@/components/SearchBar'
+import { icons } from '@/constants/icons'
+import { images } from '@/constants/images'
+import useFetch from '@/hooks/useFetch'
+import { fetchMovies } from '@/services/api'
 import { updateSearchCount } from '@/services/appwrite'
+import React, { useEffect, useRef, useState } from 'react'
+import { ActivityIndicator, FlatList, Image, Text, View } from 'react-native'
 
 const Search = () => {
 
   const [searchQuery, setSearchQuery] = useState('')
+  const searchInputRef = useRef<any>(null)
 
   const {
     data: movies,
@@ -80,6 +81,7 @@ const Search = () => {
                 placeholder='Search Movies...'
                 value={searchQuery}
                 onChangeText={(text: string) => setSearchQuery(text)}
+                searchInputRef={searchInputRef}
               />
             </View>
             {moviesLoading && (

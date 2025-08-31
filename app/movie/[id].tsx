@@ -1,17 +1,19 @@
-import {
-  View,
-  Text,
-  Image,
-  ActivityIndicator,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import PersonCard from "@/components/PersonCard";
 import { icons } from "@/constants/icons";
 import useFetch from "@/hooks/useFetch";
-import { fetchMovieDetails } from "@/services/api";
+import { fetchMovieCredits, fetchMovieDetails } from "@/services/api";
 
 interface MovieInfoProps {
   label: string;
@@ -33,6 +35,10 @@ const Details = () => {
 
   const { data: movie, isLoading } = useFetch(() =>
     fetchMovieDetails(id as string)
+  );
+
+  const { data: credits, isLoading: creditsLoading, error: creditsError } = useFetch(() =>
+    fetchMovieCredits(id as string)
   );
 
   if (isLoading)
@@ -111,6 +117,36 @@ const Details = () => {
             }
           />
         </View>
+
+        {
+          !creditsLoading && !creditsError && (
+            <View className="my-5 px-5">
+              <Text className="text-lg text-white font-bold mb-3">Top Billed Cast</Text>
+              <View className="rounded-lg p-4 border-primary border-2 align-center justify-center bg-[#0f0d23]">
+                <FlatList
+                  horizontal
+                  data={credits as Credits[]}
+                  renderItem={({ item }: { item: Credits }) => (
+                    <PersonCard
+                      {...item}
+                    />
+                  )}
+                  keyExtractor={(item: Credits) => item.credit_id.toString()}
+                  showsHorizontalScrollIndicator={false}
+                  ListEmptyComponent={
+                    <View className="mt-10 px-5">
+                      <Text className="text-center text-gray-500">
+                        No Credits Found
+                      </Text>
+                    </View>
+                  }
+
+                  ItemSeparatorComponent={() => <View className="w-4" />}
+                />
+              </View>
+            </View>
+          )
+        }
       </ScrollView>
 
       <TouchableOpacity

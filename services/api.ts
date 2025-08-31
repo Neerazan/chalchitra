@@ -8,11 +8,11 @@ export const TMDB_CONFIG = {
 }
 
 
-export const fetchMovies = async ({ query } : { query: string }) => {
+export const fetchMovies = async ({ query }: { query: string }) => {
   const endpoint = query ?
     `${TMDB_CONFIG.BASE_URL}/search/movie?query=${query}` :
     `${TMDB_CONFIG.BASE_URL}/discover/movie?sort_by=popularity.desc`
-  
+
   const response = await fetch(endpoint, {
     method: 'GET',
     headers: TMDB_CONFIG.headers
@@ -26,7 +26,7 @@ export const fetchMovies = async ({ query } : { query: string }) => {
   return data.results;
 }
 
-export const fetchMovieDetails = async (movieId: string) : Promise<MovieDetails> => {
+export const fetchMovieDetails = async (movieId: string): Promise<MovieDetails> => {
   try {
     const response = await fetch(`${TMDB_CONFIG.BASE_URL}/movie/${movieId}`, {
       method: 'GET',
@@ -39,6 +39,63 @@ export const fetchMovieDetails = async (movieId: string) : Promise<MovieDetails>
 
     const data = await response.json()
     return data;
+  } catch (error) {
+    console.log("Error: ", error)
+    throw error
+  }
+}
+
+export const fetchPersonDetails = async (personId: string): Promise<PersonDetails> => {
+  try {
+    const response = await fetch(`${TMDB_CONFIG.BASE_URL}/person/${personId}`, {
+      method: 'GET',
+      headers: TMDB_CONFIG.headers
+    })
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch person details: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    return data;
+  } catch (error) {
+    console.log("Error: ", error)
+    throw error
+  }
+}
+
+export const fetchMovieCredits = async (movieId: string): Promise<Credits[]> => {
+  try {
+    const response = await fetch(`${TMDB_CONFIG.BASE_URL}/movie/${movieId}/credits`, {
+      method: 'GET',
+      headers: TMDB_CONFIG.headers
+    })
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch movie credits: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    return data.cast;
+  } catch (error) {
+    console.log("Error: ", error)
+    throw error
+  }
+}
+
+export const fetchPersonMovieCredits = async (personId: string): Promise<MovieCredits[]> => {
+  try {
+    const response = await fetch(`${TMDB_CONFIG.BASE_URL}/person/${personId}/movie_credits`, {
+      method: 'GET',
+      headers: TMDB_CONFIG.headers
+    })
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch person movie credits: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    return data.cast
   } catch (error) {
     console.log("Error: ", error)
     throw error
