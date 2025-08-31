@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useFocusEffect } from "expo-router";
 
-const useFetch = <T>(fetchFunction: () => Promise<T>, autoFetch = true) => {
+const useFetch = <T>(fetchFunction: () => Promise<T>, autoFetch = true, fetchOnFocus = true) => {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const [isLoading, setIsLoading] = useState(false)
@@ -28,6 +29,12 @@ const useFetch = <T>(fetchFunction: () => Promise<T>, autoFetch = true) => {
       fetchData()
     }
   }, [])
+
+  useFocusEffect(
+    useCallback(() => {
+      if (fetchOnFocus) fetchData();
+    }, [])
+  );
 
   return {
     data,
