@@ -7,7 +7,7 @@ interface Props {
   onChangeText?: (text:string) => void
   placeholder: string
   value?: string
-  searchInputRef: any
+  searchInputRef?: any
 }
 
 const SearchBar = ({ onPress, onChangeText, placeholder, value, searchInputRef } : Props) => {

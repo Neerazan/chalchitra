@@ -14,6 +14,9 @@ import PersonCard from "@/components/PersonCard";
 import { icons } from "@/constants/icons";
 import useFetch from "@/hooks/useFetch";
 import { fetchMovieCredits, fetchMovieDetails } from "@/services/api";
+import { Ionicons } from '@expo/vector-icons';
+import { useEffect, useState } from "react";
+import { toggleBookmark, getSavedMovie } from "@/services/appwrite";
 
 interface MovieInfoProps {
   label: string;
@@ -32,6 +35,7 @@ const MovieInfo = ({ label, value }: MovieInfoProps) => (
 const Details = () => {
   const router = useRouter();
   const { id } = useLocalSearchParams();
+  const [isBoorkmarked, setIsBoorkmarked] = useState(false);
 
   const { data: movie, isLoading } = useFetch(() =>
     fetchMovieDetails(id as string)
@@ -41,12 +45,29 @@ const Details = () => {
     fetchMovieCredits(id as string)
   );
 
+  useEffect(() => {
+    if (movie) {
+      getSavedMovie(movie.id).then(savedMovie => {
+        if (savedMovie) {
+          setIsBoorkmarked(true)
+        }
+      })
+    }
+  }, [movie])
+
   if (isLoading)
     return (
       <SafeAreaView className="bg-primary flex-1">
         <ActivityIndicator />
       </SafeAreaView>
     );
+  
+  const handleBookmark = async () => {
+    const response = await toggleBookmark(movie as MovieDetails)
+    if (response) {
+      setIsBoorkmarked(!isBoorkmarked)
+    }
+  }
 
   return (
     <View className="bg-primary flex-1">
@@ -70,24 +91,38 @@ const Details = () => {
         </View>
 
         <View className="flex-col items-start justify-center mt-5 px-5">
-          <Text className="text-white font-bold text-xl">{movie?.title}</Text>
-          <View className="flex-row items-center gap-x-1 mt-2">
-            <Text className="text-light-200 text-sm">
-              {movie?.release_date?.split("-")[0]} •
-            </Text>
-            <Text className="text-light-200 text-sm">{movie?.runtime}m</Text>
-          </View>
+          <View className="justify-between flex-row w-full">
+            <View>
+              <Text className="text-white font-bold text-xl">{movie?.title}</Text>
+              <View className="flex-row items-center gap-x-1 mt-2">
+                <Text className="text-light-200 text-sm">
+                  {movie?.release_date?.split("-")[0]} •
+                </Text>
+                <Text className="text-light-200 text-sm">{movie?.runtime}m</Text>
+              </View>
 
-          <View className="flex-row items-center bg-dark-100 px-2 py-1 rounded-md gap-x-1 mt-2">
-            <Image source={icons.star} className="size-4" />
+              <View className="flex-row items-center bg-dark-100 px-2 py-1 rounded-md gap-x-1 mt-2">
+                <Image source={icons.star} className="size-4" />
 
-            <Text className="text-white font-bold text-sm">
-              {Math.round(movie?.vote_average ?? 0)}/10
-            </Text>
+                <Text className="text-white font-bold text-sm">
+                  {Math.round(movie?.vote_average ?? 0)}/10
+                </Text>
 
-            <Text className="text-light-200 text-sm">
-              ({movie?.vote_count} votes)
-            </Text>
+                <Text className="text-light-200 text-sm">
+                  ({movie?.vote_count} votes)
+                </Text>
+              </View>
+            </View>
+            <View>
+              <TouchableOpacity className="flex items-center justify-center" onPress={handleBookmark}>
+                <Ionicons
+                  name={isBoorkmarked ? 'bookmark' : 'bookmark-outline'}
+                  size={34}
+                  color="#AB8BFF"
+                  className="mt-1"
+                />
+              </TouchableOpacity>
+            </View>
           </View>
 
           <MovieInfo label="Overview" value={movie?.overview} />
