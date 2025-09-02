@@ -1,21 +1,24 @@
+import MovieCard from "@/components/MovieCard";
 import SearchBar from "@/components/SearchBar";
+import TrendingCard from "@/components/TrendingCard";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import useFetch from "@/hooks/useFetch";
 import { fetchMovies } from "@/services/api";
-import { useRouter } from "expo-router";
-import { ActivityIndicator, FlatList, Image, ScrollView, Text, View } from "react-native";
-import MovieCard from "@/components/MovieCard";
 import { getTrendingMovies } from "@/services/appwrite";
-import TrendingCard from "@/components/TrendingCard";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { ActivityIndicator, FlatList, Image, ScrollView, Text, View, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 
 export default function Index() {
   const router = useRouter();
+  const [page, setPage] = useState(1);
 
   const {
     data: trendingMovies,
     isLoading: trendingMoviesLoading,
-    error: trendingMoviesError
+    error: trendingMoviesError,
+    refetch: loadMovies,
   } = useFetch(() => getTrendingMovies())
 
   const {
@@ -25,6 +28,19 @@ export default function Index() {
   } = useFetch(() => fetchMovies({
     query: ''
   }))
+
+
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const isEndReached =
+    layoutMeasurement.height + contentOffset.y >= contentSize.height - 20;
+    
+    if (isEndReached) {
+      setPage(page + 1);
+      loadMovies(`page=${page}`);
+    }
+  };
+
 
   return (
     <View
@@ -41,6 +57,8 @@ export default function Index() {
           minHeight: '100%',
           paddingBottom: 10,
         }}
+        onScroll={handleScroll}
+        scrollEventThrottle={500}
       >
         <Image
           source={icons.logo}
@@ -65,51 +83,51 @@ export default function Index() {
               }}
               placeholder='Search movies...'
             />
-            
+
 
             {trendingMovies && (
               <View className="mt-10">
-                    <Text className="text-lg text-white font-bold mb-3">Trending Movies</Text>
-                    <FlatList
-                      horizontal
-                      data={trendingMovies}
-                      renderItem={({ item, index }) => (
-                        <TrendingCard movie={item} index={index} />
-                      )}
-                      keyExtractor={(item: TrendingMovie) => item.movieId.toString()}
-                      showsHorizontalScrollIndicator={false}
-                      ItemSeparatorComponent={() => <View className="w-4" />}
-                    />
-                    
+                <Text className="text-lg text-white font-bold mb-3">Trending Movies</Text>
+                <FlatList
+                  horizontal
+                  data={trendingMovies}
+                  renderItem={({ item, index }) => (
+                    <TrendingCard movie={item} index={index} />
+                  )}
+                  keyExtractor={(item: TrendingMovie) => item.movieId.toString()}
+                  showsHorizontalScrollIndicator={false}
+                  ItemSeparatorComponent={() => <View className="w-4" />}
+                />
+
               </View>
             )}
 
-              <>
-                <Text className="text-white font-bold mt-5 mb-3">
-                  Latest Movies
-                </Text>
-                <FlatList
-                  data={movies}
-                  renderItem={({ item }: { item: Movie }) => (
-                    <MovieCard
-                      {...item}
-                    />
-                  )}
-                  keyExtractor={(item: Movie) => item.id.toString()}
-                  numColumns={3}
-                  columnWrapperStyle={{
-                    justifyContent: 'flex-start',
-                    gap: 20,
-                    paddingRight: 5,
-                    marginBottom: 10
-                  }}
-                  className="mt-2 pb-32"
-                  scrollEnabled={false}
-                />
-              </>
-            </View>
+            <>
+              <Text className="text-white font-bold mt-5 mb-3">
+                Latest Movies
+              </Text>
+              <FlatList
+                data={movies}
+                renderItem={({ item }: { item: Movie }) => (
+                  <MovieCard
+                    {...item}
+                  />
+                )}
+                keyExtractor={(item: Movie) => item.id.toString()}
+                numColumns={3}
+                columnWrapperStyle={{
+                  justifyContent: 'flex-start',
+                  gap: 20,
+                  paddingRight: 5,
+                  marginBottom: 10
+                }}
+                className="mt-2 pb-32"
+                scrollEnabled={false}
+              />
+            </>
+          </View>
         )}
-          </ScrollView>
+      </ScrollView>
     </View>
   );
 }
